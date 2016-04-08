@@ -1,0 +1,78 @@
+<html>
+<head>
+	<meta charset="utf-8">
+    <title>IFE JavaScript Task 02</title>
+	<link href="../css/ll.css" type="text/css" rel="stylesheet"/>
+	<script  type="text/javascript" src="../js/jquery.min.js"></script>
+	<script src="../js/ll.js"></script>
+	<title>ll</title>
+</head>
+<body>
+  <h3>污染城市列表</h3>
+  <ul id="aqi-list">
+
+  </ul>
+
+
+
+<script type="text/javascript">
+
+
+/*var aqiData = [
+  ["北京", 90],
+  ["上海", 50],
+  ["福州", 10],
+  ["广州", 50],
+  ["成都", 90],
+  ["西安", 100]
+];*/
+
+(function() {
+
+
+var by = function(city,minor)
+{
+ return function(o, p)
+ {
+ var a, b;
+ if (typeof o === "object" && typeof p === "object" && o && p) 
+ {
+ a = o[city];
+ b = p[city];
+ if (a === b) {return typeof minor==='function' ?minor(o,p):0;}
+ if (typeof a === typeof b) { return a < b ? -1 : 1;}
+ return typeof a < typeof b ? -1 : 1;
+ }
+ else {throw ("error"); }
+ }
+}
+var aqiData=[];
+aqiData[0]={city:"北京", aqi:90, retiredate:"March 12, 2014"}
+aqiData[1]={city:"上海", aqi:50, retiredate:"June 2, 2023"}
+aqiData[2]={city:"福州", aqi:10, retiredate:"December 20, 2036"}
+aqiData[3]={city:"广州", aqi:50, retiredate:"April 30, 2020"}
+aqiData[4]={city:"成都", aqi:90, retiredate:"April 30, 2020"}
+aqiData[5]={city:"西安", aqi:100, retiredate:"April 30, 2020"}
+
+aqiData.sort(by('aqi',by('city')));
+
+var element=document.getElementById("aqi-list");
+for(var i=5;i>-1;i--){	
+	var node=document.createTextNode("第" + (6-i) + "名是：" + aqiData[i].city + "污染值：" + aqiData[i].aqi);
+	var para=document.createElement("li");
+	para.appendChild(node);
+	element.appendChild(para);
+	/*alert(aqiData[i].aqi);
+	alert(aqiData[i].city);*/
+}
+
+	
+	
+	
+	
+})();
+
+</script>
+</body>
+
+</html>
