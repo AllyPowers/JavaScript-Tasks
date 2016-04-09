@@ -377,7 +377,7 @@ function getMarginWidth() {
  * 初始化函数
  */
 function init() {
-  initGraTimeForm()
+  initGraTimeForm();
   initCitySelector();
   initAqiChartData();
   renderChart();
