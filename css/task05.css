@@ -41,7 +41,7 @@
 	animation-name: show;
 	animation-duration: 1.2s;
 	animation-iteration-count: ease-in-out;
-	animation-iteration-count: 1px;
+	animation-iteration-count: 1;
 }
 .chart-block-before:before{
     content: attr(data-show);
