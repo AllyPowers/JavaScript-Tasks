@@ -49,7 +49,6 @@
 					i--;
 				}
 			}
-			console.log(inArr);
 			return inArr;
 		}
 		function inRender(flag) {
@@ -62,7 +61,6 @@
 				}
 				//先操作全局数组，将inArr数组复制到全局数组中去
 				blockArray = flag?[].concat.call(inArr, blockArray):[].concat.call(blockArray, inArr);
-				console.log(inArr);
 				var localBlocksWrapper = blocksWrapper;
 				var fragment = document.createDocumentFragment();
 				for (var i = inArr.length - 1; i >= 0; i--) {
@@ -90,7 +88,6 @@
 					}
 				}
 			}
-			console.log(blockArray);
 		}
 		function outRender(flag) {
 			//分块进行删除
@@ -108,7 +105,6 @@
 					blockArray.pop();
 				}	
 			}
-			console.log(blockArray);
 		}
 		function searchRespond() {
 			var searchIn = document.getElementById("textSearch"),
@@ -118,8 +114,6 @@
 			    localBlockArr = blockArray,
 			    matchRes = null,
 			    temp;
-			console.log(spanEles);
-			console.log(localBlockArr);
 			for (var i = 0; i < localBlockArr.length; i++) {
 				temp = localBlockArr[i];
 				if (temp.match(reg)) {
