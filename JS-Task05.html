@@ -1,0 +1,66 @@
+<!DOCTYPE>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <title>IFE JavaScript Task 01</title>
+    <style type="text/css">
+      .aqi-chart-wrap{
+            overflow: hidden;
+            zoom: 1;
+            border: 1px solid #000000;
+            height: 550px;
+            width: 100%;;
+        }
+        .box{
+            float: left;
+            height: 100%;
+            position: relative;
+        }
+        .day{
+            width: 10px;
+        }
+        .week{
+            width: 40px;
+        }
+        .month{
+            width: 70px;
+        }
+        .aqi-chart-wrap .data-info{
+            position:absolute;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+<fieldset id="form-gra-time">
+    <legend>请选择日期粒度：</legend>
+    <label>日<input name="gra-time" value="day" type="radio" checked="checked"></label>
+    <label>周<input name="gra-time" value="week" type="radio"></label>
+    <label>月<input name="gra-time" value="month" type="radio"></label>
+</fieldset>
+
+<fieldset>
+    <legend>请选择查看的城市：</legend>
+    <select id="city-select">
+
+    </select>
+</fieldset>
+
+<div class="aqi-chart-wrap">
+    <div class="box">
+        <div class="data-info"></div>
+    </div>
+    <div class="box" >
+        <div class="data-info" style="height: 10px;"></div>
+    </div>
+    <div class="box">
+        <div class="data-info"></div>
+    </div>
+</div>
+<script src="task-05.js"></script>
+</body>
+</html>

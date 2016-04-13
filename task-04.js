@@ -49,7 +49,6 @@ function renderAqiList() {
 	for(var sCity in aqiData){
 		if (table.children.length == 0) {
 			table.innerHTML = "<tr> <td>城市</td> <td>空气质量</td> <td>操作</td> </tr>";
-			alert (table.children);
 		}
 		var tr = document.createElement("tr");
 		var td1 = document.createElement("td");
@@ -57,6 +56,7 @@ function renderAqiList() {
 		tr.appendChild(td1);
 		var td2 = document.createElement("td");
 		td2.innerHTML = aqiData[sCity];
+		alert(aqiData[sCity]);
 		tr.appendChild(td2);
 		var td3 = document.createElement("td");
 		td3.innerHTML = "<button class='del-btn'>删除</button>";
