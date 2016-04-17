@@ -84,8 +84,6 @@
 	</select>
 	<script type="text/javascript">
 		/*整体规划：先绑定  再遍历且后件渲染数组   再render
-		problems： 1：在监控选择框选择项发生变化是遇到较为棘手的问题
-				   2：在事件调用函数的递归处理时出现问题
 		*/
 		var interval = 1000;
 		var stack = []; /*咱们使用栈来模拟所谓的递归遍历*/
@@ -151,17 +149,17 @@
 			var lastVisit = null;
 			var stackPoint = curNode;
 			while(stackPoint !== null || stack.length > 0){
-				while(stackPoint){
+				while(stackPoint){  //先走到左边的尽头   对任何一个非栈中(cur)(初始化时或右节点)的节点  都要进行左节点完全化访问
 					stack.unshift(stackPoint);
 					stackPoint = stack[0].firstElementChild;
 				}
 				stackPoint = stack[0];
-				if (stackPoint.lastElementChild == null || lastVisit == stackPoint.lastElementChild) {
+				if (stackPoint.lastElementChild == null || lastVisit == stackPoint.lastElementChild) {   /*当前节点的是否有右节点或右节点是否已经访问(后续遍历吗)   某个节点要想访问： 要么右节点为空  要么右节点已经访问(且就是上一次访问) */
 					renderArr.push(stackPoint);
 					stack.shift();
 					lastVisit = stackPoint;
 					stackPoint = null;
-				}else{
+				}else{   /*右节点没访问   指针指向*/
 					stackPoint = stackPoint.lastElementChild;
 				}
 			}
