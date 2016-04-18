@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JS-Task12</title>
+</head>
+<style>
+	.lev-1{
+		height: 100px;
+	}
+	.lev-2{
+		height: 80px;
+	}
+	.lev-3{
+		height: 60px;
+	}
+	.lev-4{
+		height: 40px;
+	}
+	.lev-5{
+		height: 20px;
+	}
+	div{
+		border: 1px solid #ccc;
+		display: flex;
+		justify-content: space-around;
+	    flex-grow: 1;
+	    align-items: center;
+	    background-color: #fff;
+	}
+	.Fish{
+		flex-grow: 1.7;
+	}
+	#delBlock{
+		margin: 20px 0;
+	}
+	.operate-area{
+	    margin-left: 30px;
+	    display: inline-block;
+	    border: none;
+	    margin-top: 30px;
+	}
+</style>
+<body>
+	<div class="Super lev-1" id="topNode">Super
+		<div class="Car lev-2">Car
+			<div class="Apple lev-3">Apple
+				<div class="Pear lev-4">Pear</div>
+				<div class="pig lev-4">pig</div>
+				<div class="Cola lev-4">Cola</div>
+				<div class="Soccor lev-4">Soccor</div>
+			</div>
+			<div class="Phone lev-3">Phone</div>
+			<div class="None lev-3">None
+				<div class="Book lev-4">Book</div>
+				<div class="School lev-4">School</div>
+			</div>
+		</div>
+		<div class="Note lev-2">Note
+			<div class="Human lev-3">Human
+				<div class="Code lev-4">Code</div>
+				<div class="Operate lev-4">Operate</div>
+				<div class="Man lev-4">Man</div>
+			</div>
+			<div class="Program lev-3">Program
+				<div class="Boment lev-4">Boment
+					<div class="Cat lev-5">Cat</div>
+				</div>
+				<div class="Glass lev-4">Glass</div>
+			</div>
+		</div>
+		<div class="Fish lev-2">
+			Fish
+		</div>
+	</div>
+	<div class="operate-area">
+		<input type="button" value="深度优先" id="DFS">
+		<input type="button" value="广度优先" id="BFS">
+		<select name="sortRate" id="sortRate">
+			<option value="1000ms">1000ms</option>
+			<option value="500ms">500ms</option>
+			<option value="200ms">200ms</option>
+		</select><br/>
+		<input type="button" value="删除选中节点" id="delBlock"><br/>
+		<input type="text" id="addMsg" placeholder="请输入新加节点的内容">
+		<input type="button" id="addBlock" value="添加节点">
+	</div>
+	<script type="text/javascript">
+		/*整体规划：先绑定  再遍历且后件渲染数组   再render
+		*/
+		var interval = 1000;
+		var renderArr = [];
+		var topNode = document.getElementById("topNode");
+		var curSelectBlock = null;
+		var blockAddLock = false;  //节点添加或删除锁，当在进行节点搜索的时候不能进行节点的添加或删除
+		function btnEventBind() {
+			var dfsBtn = document.getElementById("DFS");
+			var bfsBtn = document.getElementById("BFS");
+			var rateSelect = document.getElementById("sortRate");
+			EventUtil.addHandler(rateSelect,"blur",function (event) {
+				var selectObj = event.target;
+				var text = selectObj.options[selectObj.selectedIndex].text;
+				if (interval+"" !== text) {
+					interval = parseInt(text);
+				}
+			});
+			EventUtil.addHandler(dfsBtn,"click",DFSearch);
+			EventUtil.addHandler(bfsBtn,"click",BFSearch);
+		}
+		function DFSearch() {
+			blockAddLock = true;
+			/*作者能力有限，暂时只能用递归了，以后定补上*/
+			renderArr = [];
+			DFS(topNode);
+			renderChange();
+			blockSelect = false;
+		}
+		function DFS(node) {
+			if (node === null || node.getAttribute("class") === "operate-area") {
+				return;
+			}
+			renderArr.push(node);
+			DFS(node.firstElementChild);
+			DFS(node.nextElementSibling);
+		}
+		function BFSearch() {
+			//使用队列来模拟广度优先alog
+			blockAddLock = true;
+			var queue = [];
+			var point = null;
+			queue.push(topNode);
+			renderArr.push(topNode);
+			while(queue.length > 0){
+				point = queue.shift();
+				for(var w = point.firstElementChild; w!==null; w=w.nextElementSibling){
+					renderArr.push(w);
+					queue.push(w);
+				}
+			}
+			renderChange();
+			blockAddLock = false;
+		}
+		function renderChange() {
+			var lastRender = renderArr[0];
+			setTimeout(function () {
+				lastRender.style.backgroundColor = "#fff";
+				lastRender = renderArr.shift();
+				lastRender.style.backgroundColor = "#f28749";
+				if (renderArr[0]) {
+					setTimeout(arguments.callee,interval);
+				}else{
+					setTimeout(function () {
+						lastRender.style.backgroundColor = "#fff";
+					},interval);
+				}
+			},interval)
+		}
+		function getInputMsg() {
+			var msgInput = document.getElementById("addMsg");
+			return msgInput.value;
+		}
+		function initBloackOperate() {
+			var addBtn = document.getElementById("addBlock");
+			var delBtn = document.getElementById("delBlock");
+			EventUtil.addHandler(addBtn,"click",blockAdd);
+			EventUtil.addHandler(delBtn,"click",blockDel);
+			EventUtil.addHandler(topNode,"click",blockSelect);
+		}
+		function blockSelect(event) {
+			//对于根节点的删除做限制
+			if (curSelectBlock) {
+				curSelectBlock.style.backgroundColor = "#fff";
+			}
+			curSelectBlock = event.target;
+			event.target.style.backgroundColor = "#ccc";
+		}
+		function blockAdd() {
+			if (blockAddLock) {
+				return;
+			}
+			var value = getInputMsg();
+			var div = document.createElement("div");
+			var temp = null;
+			div.innerText = value;
+			if (temp = curSelectBlock.firstElementChild) {
+				div.className = temp.className;
+				div.setAttribute("class",temp.className);
+			}
+			curSelectBlock.appendChild(div);
+			curSelectBlock.style.backgroundColor = "#fff";
+		}
+		function blockDel() {
+			if (blockAddLock) {
+				return;
+			}
+			if (curSelectBlock.id == "topNode") {
+				alert("NONONO 不要把根节点删了吗");
+				return;
+			}
+			curSelectBlock.parentElement.removeChild(curSelectBlock);
+		}
+		function init() {
+			btnEventBind();
+			initBloackOperate();
+		}
+		var EventUtil = {
+		  addHandler: function (element, type, handler) {
+		    if(element.addEventListener){
+		      element.addEventListener(type,handler,false);
+		    }else if(element.attachEvent){
+		      element.attachEvent("on"+type, handler);
+		    }else{
+		      element["on"+type] = handler;
+		    }
+		  },
+		  removeHandler: function (element,type,handler) {
+		    if (element.removeEventListener) {
+		      element.removeEventListener(type,handler,false);
+		    } else if (element.detachEvent) {
+		      element.detachEvent("on"+type,handler);
+		    } else {
+		      element["on"+type] = null;
+		    }
+		  }
+		}
+		init();
+	</script>
+</body>
+</html>
