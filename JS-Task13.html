@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>IFE-JS-Task13</title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		body{
+			padding-left: 400px;
+			padding-top: 100px;
+		}
+		div{
+			border: 1px solid #ccc;
+			display: flex;
+		    align-items: center;
+		    flex-wrap: wrap;
+		    box-sizing: border-box;
+		    margin: 10px 0;
+			padding: 5px 10px 0 10px;
+			transition: left 0.5s;
+			background-color: #fff;
+		}
+		.level-1{
+			width: 500px;
+		}
+		.level-1 span{
+			cursor: pointer;
+		}
+		.close div{
+			display: none;
+			left: -500px;
+		}
+		.level-2{
+			width: 475px;
+		}
+		.level-3{
+			width: 450px;
+		}
+		.level-4{
+			width: 420px;
+		}
+		.operate{
+			display: block;
+			position: absolute;
+			display: block;
+		    position: absolute;
+		    top: 20px;
+		    width: 500px;
+		    border: 0;
+		}
+		.operate input{
+			margin: 6px 10px;
+		}
+		.operate input[type="text"]{
+			border-radius: 3px;
+			outline: none;
+			border: 1px solid #ccc;
+		}
+		.operate input[type="button"]{
+			border-radius: 3px;
+			outline: none;
+			border: 1px solid #ccc;
+			background-color: #4f8c92;
+			color: #F8EED2;
+			padding: 3px 6px;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<div class="operate">
+		<input type="text" id="searchIn" placeholder="区分大小写哦">
+		<input type="button" id="DFSbtn" value="深度优先搜索">
+		<input type="button" id="BFSbtn" value="广度优先搜索"><br/>
+		<input type="text" id="nodeAddIn" placeholder="请输入节点的文本">
+		<input type="button" id="addBlock" value="添加节点">
+		<input type="button" id="delBlock" value="删除选中节点">
+	</div>
+	<div class="level-1" id="topNode" data-us="Object">
+		<span><img src="images/triangle-right.png" alt="td"></span>Object
+		<div class="level-2" data-us="Animal">
+			<span><img src="images/triangle-right.png" alt="td"></span>Animal
+			<div class="level-3" data-us="dog">dog</div>
+			<div class="level-3" data-us="cat">cat</div>
+			<div class="level-3" data-us="dunk">dunk</div>
+		</div>
+		<div class="level-2" data-us="Cars">
+			<span><img src="images/triangle-right.png" alt="td"></span>Cars
+			<div class="level-3" data-us="VW">
+				<span><img src="images/triangle-right.png" alt="td"></span>VW
+				<div class="level-4" data-us="vw--ms">
+					<span><img src="images/triangle-right.png" alt="td"></span>vw--ms
+				</div>
+			</div>
+			<div class="level-3" data-us="Peugeot">
+				<span><img src="images/triangle-right.png" alt="td"></span>Peugeot
+				<div class="level-4" data-us="Renault clio">
+					<span><img src="images/triangle-right.png" alt="td"></span>Renault clio
+				</div>
+			</div>
+			<div class="level-3" data-us="Contact">Contact</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+				/*整体规划：先绑定  再遍历且后件渲染数组   再render
+		*/
+		var interval = 700;
+		var renderArr = [];
+		var searchMsg = "";
+		var topNode = document.getElementById("topNode");
+		var curSelectBlock = null;
+		var blockAddLock = false;  //节点添加或删除锁，当在进行节点搜索的时候不能进行节点的添加或删除
+		function btnEventBind() {
+			var dfsBtn = document.getElementById("DFSbtn");
+			var bfsBtn = document.getElementById("BFSbtn");
+			EventUtil.addHandler(dfsBtn,"click",DFSearch);
+			EventUtil.addHandler(bfsBtn,"click",BFSearch);
+		}
+		function DFSearch() {
+			blockAddLock = true;
+			searchMsg = document.getElementById("searchIn").value;
+			/*作者能力有限，暂时只能用递归了，以后定补上*/
+			renderArr = [];
+			DFS(topNode);
+			renderChange();
+			blockSelect = false;
+		}
+		function DFS(node) {
+			if (node === null || node.getAttribute("class") === "operate-area") {
+				return;
+			}
+			if (node.tagName !== "IMG" && node.tagName !== "SPAN") {
+				renderArr.push(node);
+			}
+			DFS(node.firstElementChild);
+			DFS(node.nextElementSibling);
+		}
+		function BFSearch() {
+			//使用队列来模拟广度优先alog
+			searchMsg = document.getElementById("searchIn").value;
+			blockAddLock = true;
+			var queue = [];
+			var point = null;
+			queue.push(topNode);
+			renderArr.push(topNode);
+			while(queue.length > 0){
+				point = queue.shift();
+				for(var w = point.firstElementChild; w!==null; w=w.nextElementSibling){
+					if (w.tagName=="IMG" || w.tagName=="SPAN") {
+						continue;
+					}
+					renderArr.push(w);
+					queue.push(w);
+				}
+			}
+			renderChange();
+			blockAddLock = false;
+		}
+		function renderChange() {   //在绘制的时候若遇到搜索节点直接停止搜索
+			var lastRender = renderArr[0];
+			setTimeout(function () {
+				lastRender.style.backgroundColor = "#fff";
+				lastRender = renderArr.shift();
+				lastRender.style.backgroundColor = "#f28749";
+				console.log(lastRender.getAttribute("data-us"));
+				if (lastRender.className.includes("close")) {
+					lastRender.className = lastRender.className.replace(/ close/,"");
+				}
+				if (lastRender.getAttribute("data-us") == searchMsg) {
+					lastRender.style.backgroundColor = "red";
+					setTimeout(function () {
+						lastRender.style.backgroundColor = "#fff";
+					},3000);
+				}else if (renderArr[0]) {
+					setTimeout(arguments.callee,interval);
+				}else{
+					setTimeout(function () {
+						lastRender.style.backgroundColor = "#fff";
+					},interval);
+				}
+			},interval);
+		}
+		function getInputMsg() {
+			var msgInput = document.getElementById("nodeAddIn");
+			return msgInput.value;
+		}
+		function initBloackOperate() {
+			var addBtn = document.getElementById("addBlock");
+			var delBtn = document.getElementById("delBlock");
+			EventUtil.addHandler(addBtn,"click",blockAdd);
+			EventUtil.addHandler(delBtn,"click",blockDel);
+			EventUtil.addHandler(topNode,"click",blockSelect);
+		}
+		function blockSelect(event) {
+			//对于根节点的删除做限制
+			if(event.target.tagName === "IMG"){
+				var parentNode = event.target.parentElement.parentElement;
+				var classNam = parentNode.className;
+				if(classNam.includes("close")){
+					parentNode.className = classNam.replace(/ close/,"");
+				}else{
+					parentNode.className = classNam+" close";
+				}
+				return;
+			}
+			if (curSelectBlock) {
+				curSelectBlock.style.backgroundColor = "#fff";
+			}
+			curSelectBlock = event.target;
+			event.target.style.backgroundColor = "#ccc";
+		}
+		function blockAdd() {
+			if (blockAddLock) {
+				return;
+			}
+			var value = getInputMsg();
+			var div = document.createElement("div");
+			var temp = null;
+			div.innerText = value;
+			div.setAttribute("data-us",value);
+			if (temp = curSelectBlock.lastElementChild) {
+				div.className = temp.className;
+				div.setAttribute("class",temp.className);
+			}else{
+				var img = document.createElement("img");
+				img.src = "images/triangle-right.png";
+				var span = document.createElement("span");
+				span.appendChild(img);
+				div.setAttribute("class",curSelectBlock.className);
+				curSelectBlock.insertBefore(span,curSelectBlock.firstChild);
+			}
+			curSelectBlock.appendChild(div);
+			curSelectBlock.style.backgroundColor = "#fff";
+		}
+		function blockDel() {
+			if (blockAddLock) {
+				return;
+			}
+			if (curSelectBlock.id == "topNode") {
+				alert("NONONO 不要把根节点删了吗");
+				return;
+			}
+			curSelectBlock.parentElement.removeChild(curSelectBlock);
+		}
+		function init() {
+			btnEventBind();
+			initBloackOperate();
+		}
+		var EventUtil = {
+		  addHandler: function (element, type, handler) {
+		    if(element.addEventListener){
+		      element.addEventListener(type,handler,false);
+		    }else if(element.attachEvent){
+		      element.attachEvent("on"+type, handler);
+		    }else{
+		      element["on"+type] = handler;
+		    }
+		  },
+		  removeHandler: function (element,type,handler) {
+		    if (element.removeEventListener) {
+		      element.removeEventListener(type,handler,false);
+		    } else if (element.detachEvent) {
+		      element.detachEvent("on"+type,handler);
+		    } else {
+		      element["on"+type] = null;
+		    }
+		  }
+		}
+		init();
+	</script>
+</body>
+</html>
