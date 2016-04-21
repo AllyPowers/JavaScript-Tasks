@@ -64,6 +64,7 @@ $("#tag").onkeydown = function(e){
 addEventHandler($("#check"),'click',function(e){
 	textList = splitText();
 	render("text");
+	$("#text").value = "";
 });
 
 
